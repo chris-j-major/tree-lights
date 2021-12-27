@@ -8,7 +8,7 @@ class Lights {
         this.pattern = [[]];
         this.frame = 0;
         this.frames = 1;
-        this.scale = 80;
+        this.scale = 240;
         this.rotate = 0.1;
         this.rotate_speed = 0.1;
         this.x_offset = 0;
@@ -42,7 +42,7 @@ class Lights {
         return this.x_offset + (d[0]*Math.sin(this.rotate) + d[1]*Math.cos(this.rotate)) * this.scale
     }
     yCoord(d){
-        return this.y_offset + (d[0]*Math.cos(this.rotate) + d[1]*Math.sin(this.rotate)) * 0.1 * this.scale
+        return this.y_offset + (d[0]*Math.cos(this.rotate) - d[1]*Math.sin(this.rotate)) * 0.4 * this.scale
             + -1 * d[2] * this.scale;
     }
 
