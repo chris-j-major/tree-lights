@@ -8,8 +8,14 @@
     </head>
     <body>
         <svg width="300px" height="300px" viewbox="-150 -150 300 300" id="lights"></svg>
+        <div id="control">
+            <button type="button" onclick="display.play()">Play</button>
+            <button type="button" onclick="display.stop()">Stop</button>
+            <input type="range" min="1" max="100" value="50" class="slider" id="frameline">
+        </div>
         <script>
             const display = new Lights(d3.select("#lights"));
+            display.attachFrameSlider(document.getElementById("frameline"))
             new Autosize("#lights",()=>{
                 display.resized();
             })
@@ -24,9 +30,5 @@
                 display.lightPattern(data);
             });
         </script>
-        <div id="control">
-            <button type="button" onclick="display.play()">Play</button>
-            <button type="button" onclick="display.stop()">Stop</button>
-        </div>
     </body>
 </html>

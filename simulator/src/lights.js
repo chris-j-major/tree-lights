@@ -35,7 +35,7 @@ class Lights {
         });
         this.frames = this.pattern.length;
         this.frame = 0;
-        this.update( { positions:false , colors:true });
+        this.update( { positions:false, colors:true, slider:true });
     }
 
     xCoord(d){
@@ -48,6 +48,10 @@ class Lights {
 
     update( parts ){
         const l = this;
+        if ( parts.slider && this.frame_slider ){
+            this.frame_slider.max = l.frames -1;
+            this.frame_slider.value = l.frame;
+        }
         if ( parts.positions ){
             function setPositions(e){
                 e.attr("cx",(d)=>l.xCoord(d))
@@ -82,7 +86,7 @@ class Lights {
             this.timer = window.setInterval(()=>{
                 l.rotate += l.rotate_speed;
                 l.frame  = (l.frame+1) % l.frames;
-                l.update( { positions:true , colors:true });
+                l.update( { positions:true , colors:true , slider:true });
             }, 100);
         }
     }
@@ -92,6 +96,14 @@ class Lights {
             window.clearInterval(this.timer);
         }
         this.timer = null;
+    }
+
+    attachFrameSlider(element){
+        this.frame_slider = element;
+        element.oninput = ()=>{
+            this.frame = this.frame_slider.value;
+            this.update( { positions:false , colors:true , slider:false });
+        }
     }
 
     resized(){
