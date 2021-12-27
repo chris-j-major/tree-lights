@@ -7,8 +7,12 @@ class Lights {
         this.lights = [];
         this.pattern = [[]];
         this.frame = 0;
-        this.scale = 40;
+        this.frames = 1;
+        this.scale = 80;
         this.rotate = 0.1;
+        this.rotate_speed = 0.1;
+        this.x_offset = 0;
+        this.y_offset = 150;
     }
 
     lightPositions(data){
@@ -29,15 +33,16 @@ class Lights {
             }
             return colors;
         });
+        this.frames = this.pattern.length;
         this.frame = 0;
         this.update( { positions:false , colors:true });
     }
 
     xCoord(d){
-        return (d[0]*Math.sin(this.rotate) + d[1]*Math.cos(this.rotate)) * this.scale
+        return this.x_offset + (d[0]*Math.sin(this.rotate) + d[1]*Math.cos(this.rotate)) * this.scale
     }
     yCoord(d){
-        return (d[0]*Math.cos(this.rotate) + d[1]*Math.sin(this.rotate)) * 0.1 * this.scale
+        return this.y_offset + (d[0]*Math.cos(this.rotate) + d[1]*Math.sin(this.rotate)) * 0.1 * this.scale
             + -1 * d[2] * this.scale;
     }
 
@@ -69,6 +74,24 @@ class Lights {
             }
             this.all_lights.call(setColor);
         }
+    }
+
+    play(){
+        const l = this;
+        if ( !this.timer ){
+            this.timer = window.setInterval(()=>{
+                l.rotate += l.rotate_speed;
+                l.frame  = (l.frame+1) % l.frames;
+                l.update( { positions:true , colors:true });
+            }, 100);
+        }
+    }
+
+    stop(){
+        if ( this.timer ){
+            window.clearInterval(this.timer);
+        }
+        this.timer = null;
     }
 
     resized(){

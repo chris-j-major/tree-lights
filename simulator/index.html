@@ -4,12 +4,13 @@
         <script src="res/d3.js"></script>
         <script src="src/autosize.js"></script>
         <script src="src/lights.js"></script>
+        <link rel="stylesheet" href="src/style.css">
     </head>
     <body>
         <svg width="300px" height="300px" viewbox="-150 -150 300 300" id="lights"></svg>
         <script>
             const display = new Lights(d3.select("#lights"));
-            new Autosize("lights",()=>{
+            new Autosize("#lights",()=>{
                 display.resized();
             })
             d3.text("../input/trees/coords_2021.csv").then((text)=>{
@@ -23,5 +24,9 @@
                 display.lightPattern(data);
             });
         </script>
+        <div id="control">
+            <button type="button" onclick="display.play()">Play</button>
+            <button type="button" onclick="display.stop()">Stop</button>
+        </div>
     </body>
 </html>
