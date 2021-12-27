@@ -19,9 +19,10 @@
             new Autosize("#lights",()=>{
                 display.resized();
             })
-            d3.text("../input/trees/coords_2021.csv").then((text)=>{
+            d3.text("../input/trees/pcam_coords.csv").then((text)=>{
                 // This is because the light positions don't have a header row
                 const data = d3.csvParseRows(text).map((row)=>{
+                    row.splice(0,1)
                     return row.map( value => +value )
                 })
                 display.lightPositions(data); 
