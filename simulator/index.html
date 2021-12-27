@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>Tree light simulator</title>
+        <script src="res/d3.js"></script>
+        <script src="src/autosize.js"></script>
+        <script src="src/lights.js"></script>
+    </head>
+    <body>
+        <svg width="300px" height="300px" viewbox="-150 -150 300 300" id="lights"></svg>
+        <script>
+            const display = new Lights(d3.select("#lights"));
+            new Autosize("lights",()=>{
+                display.resized();
+            })
+            d3.text("../input/trees/coords_2021.csv").then((text)=>{
+                // This is because the light positions don't have a header row
+                const data = d3.csvParseRows(text).map((row)=>{
+                    return row.map( value => +value )
+                })
+                display.lightPositions(data); 
+            });
+            d3.csv("../input/patterns/moving-rotating-rainbow.csv").then( (data)=>{
+                display.lightPattern(data);
+            });
+        </script>
+    </body>
+</html>
