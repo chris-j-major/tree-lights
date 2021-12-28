@@ -2,7 +2,8 @@ class Lights {
     constructor(element){
         this.el = element;
         this.g = {
-            lights:element.append("g").attr("class", "lights")
+            lines:element.append("g").attr("class", "lines"),
+            lights:element.append("g").attr("class", "lights"),
         };
         this.lights = [];
         this.pattern = [[]];
@@ -13,6 +14,12 @@ class Lights {
         this.rotate_speed = 0.1;
         this.x_offset = 0;
         this.y_offset = 150;
+        this.lines = [
+            { p1:[0,0,0,],p2:[1,0,0], stroke:"red"},
+            { p1:[0,0,0,],p2:[0,1,0], stroke:"green"},
+            { p1:[0,0,0,],p2:[0,0,1], stroke:"blue"},
+        ];
+        this.update( { lines:true });
     }
 
     lightPositions(data){
@@ -83,6 +90,28 @@ class Lights {
                 el.attr("fill",(_,i)=>l.pattern[l.frame][i])
             }
             this.all_lights.call(setColor);
+        }
+        if ( parts.lines || parts.positions ){
+            function setLine(el){
+                el.attr("x1",(d)=>l.xCoord(d.p1))
+                el.attr("y1",(d)=>l.yCoord(d.p1))
+                el.attr("x2",(d)=>l.xCoord(d.p2))
+                el.attr("y2",(d)=>l.yCoord(d.p2))
+                el.attr("stroke",(d)=>d.stroke)
+            }
+            this.g.lines.selectAll("line")
+                .data(this.lines)
+                .join( 
+                    (enter)=>{
+                        enter.append("line");
+                    }, 
+                    (update)=>{
+                    }, 
+                    (exit)=>{
+                        exit.remove();
+                    }
+                );
+                this.g.lines.selectAll("line").call(setLine)
         }
     }
 
