@@ -12,6 +12,7 @@ class Lights {
         this.scale = 240;
         this.rotate = 0.1;
         this.rotate_speed = 0.1;
+        this.view_angle = 0;
         this.x_offset = 0;
         this.y_offset = 150;
         this.lines = [
@@ -34,7 +35,7 @@ class Lights {
             const colors = [];
             let i = 0;
             while( row["R_"+i] ){
-                const c = "rgb("+row["R_"+i]+","+row["G_"+i]+","+row["B_"+i]+")";
+                const c = "rgba("+row["R_"+i]+","+row["G_"+i]+","+row["B_"+i]+",0.8)";
                 colors[i] = c;
                 i++;
             }
@@ -49,8 +50,10 @@ class Lights {
         return this.x_offset + (d[0]*Math.sin(this.rotate) + d[1]*Math.cos(this.rotate)) * this.scale
     }
     yCoord(d){
-        return this.y_offset + (d[0]*Math.cos(this.rotate) - d[1]*Math.sin(this.rotate)) * 0.4 * this.scale
-            + -1 * d[2] * this.scale;
+        const t = Math.sin(this.view_angle);
+        const s = Math.cos(this.view_angle) * -1.0;
+        return this.y_offset + t*(d[0]*Math.cos(this.rotate) - d[1]*Math.sin(this.rotate)) * this.scale
+            + s * d[2] * this.scale;
     }
 
     update( parts ){
@@ -69,7 +72,7 @@ class Lights {
             function setPositions(e){
                 e.attr("cx",(d)=>l.xCoord(d))
                  .attr("cy",(d)=>l.yCoord(d))
-                 .attr("r",1);
+                 .attr("r",4);
             }
             this.g.lights.selectAll("circle")
                 .data(this.lights)
@@ -145,6 +148,14 @@ class Lights {
         this.rotate_slider = element;
         element.oninput = ()=>{
             this.rotate = parseFloat(this.rotate_slider.value);
+            this.update( { positions:true , colors:false , slider:false });
+        }
+    }
+
+    attachAngleSlider(element){
+        this.angle_slider = element;
+        element.oninput = ()=>{
+            this.view_angle = parseFloat(this.angle_slider.value);
             this.update( { positions:true , colors:false , slider:false });
         }
     }

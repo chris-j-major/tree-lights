@@ -13,23 +13,25 @@
             <button type="button" onclick="display.stop()">Stop</button>
             <input type="range" min="0" max="100" value="0" class="slider" id="frameline">
             <input type="range" min="0" max="6.28" step="0.01" value="0" class="slider" id="rotate">
+            <input type="range" min="0" max="6.28" step="0.01" value="0" class="slider" id="angle">
         </div>
         <script>
             const display = new Lights(d3.select("#lights"));
             display.attachFrameSlider(document.getElementById("frameline"))
             display.attachRotateSlider(document.getElementById("rotate"))
+            display.attachAngleSlider(document.getElementById("angle"))
             new Autosize("#lights",()=>{
                 display.resized();
             })
-            d3.text("../input/trees/pcam_coords.csv").then((text)=>{
+            d3.text("../input/trees/coords_2021.csv").then((text)=>{
                 // This is because the light positions don't have a header row
                 const data = d3.csvParseRows(text).map((row)=>{
-                    row.splice(0,1)
+                    //row.splice(0,1)
                     return row.map( value => +value )
                 })
                 display.lightPositions(data); 
             });
-            d3.csv("../input/patterns/pcam-sins.csv").then( (data)=>{
+            d3.csv("../input/patterns/matt-twist.csv").then( (data)=>{
                 display.lightPattern(data);
             });
         </script>
