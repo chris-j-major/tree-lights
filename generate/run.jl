@@ -1,14 +1,30 @@
 include("io.jl")
 
+function color(r,g,b)
+    return ( convert(UInt8, floor(r)), convert(UInt8, floor(g)) ,convert(UInt8, floor(b)))
+end
+
 function field_function( frame_index , position )
     r = (sin(frame_index*0.1+position[1]*4.0)+1)*128
     g = (sin(frame_index*0.1+position[2]*4.0)+1)*128
     b = (sin(frame_index*0.1+position[3]*4.0)+1)*128
-    return ( convert(UInt8, floor(r)), convert(UInt8, floor(g)) ,convert(UInt8, floor(b)))
+    return color(r,g,b)
+end
+
+function twist_function( frame_index , position )
+    height_theta = position[3] * frame_index * 0.1
+    light_theta = atan(position[1],position[2])
+    theta = height_theta + light_theta
+    if cos(theta) > 0.0 
+        return color(255,0,0)
+    else
+        return color(0,255,0)
+    end
 end
 
 fields = Dict(
-    "sins" => field_function
+    "sins" => field_function,
+    "twist" => twist_function
 )
 
 trees = Dict(
