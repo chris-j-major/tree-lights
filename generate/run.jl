@@ -7,6 +7,17 @@ function field_function( frame_index , position )
     return ( convert(UInt8, floor(r)), convert(UInt8, floor(g)) ,convert(UInt8, floor(b)))
 end
 
-tree = load_tree("input/trees/pcam_coords.csv")
+fields = Dict(
+    "sins" => field_function
+)
 
-export_field_function("field",field_function,tree,100)
+trees = Dict(
+    "pcam" => load_tree("input/trees/pcam_coords.csv"),
+ #   "matt" => load_tree("input/trees/coords_2021.csv";has_index=false)
+)
+
+for (tree_name,tree) in trees, (field_name,field) in fields
+    name="$tree_name-$field_name"
+    println("Writing $name")
+    export_field_function(name,field,tree,100)
+end
