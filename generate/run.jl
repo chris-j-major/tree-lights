@@ -11,7 +11,7 @@ function field_function( frame_index , position )
     return color(r,g,b)
 end
 
-function twist_function( frame_index , position )
+function twist_sharp_function( frame_index , position )
     height_theta = position[3] * frame_index * 0.1
     light_theta = atan(position[1],position[2])
     theta = height_theta + light_theta
@@ -22,9 +22,24 @@ function twist_function( frame_index , position )
     end
 end
 
+function linear_rainbow( v )
+    r = (sin(v+1)+1)*128
+    g = (sin(v+2)+1)*128
+    b = (sin(v)+1)*128
+    return color(r,g,b)
+end
+
+function twist_smooth_function( frame_index , position )
+    height_theta = position[3] * frame_index * 0.1
+    light_theta = atan(position[1],position[2])
+    theta = height_theta + light_theta
+    return linear_rainbow(theta)
+end
+
 fields = Dict(
     "sins" => field_function,
-    "twist" => twist_function
+    "twist" => twist_sharp_function,
+    "twist-smooth" => twist_smooth_function,
 )
 
 trees = Dict(
