@@ -13,7 +13,7 @@ fields = Dict(
 
 trees = Dict(
     "pcam" => load_tree("input/trees/pcam_coords.csv"),
- #   "matt" => load_tree("input/trees/coords_2021.csv";has_index=false)
+    "matt" => load_tree("input/trees/coords_2021.csv";has_index=false)
 )
 
 for (tree_name,tree) in trees, (field_name,field) in fields
