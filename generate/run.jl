@@ -43,12 +43,33 @@ fields = Dict(
 )
 
 trees = Dict(
-    "pcam" => load_tree("input/trees/pcam_coords.csv"),
-    "matt" => load_tree("input/trees/coords_2021.csv";has_index=false)
+    "pcam" => (file="input/trees/pcam_coords.csv",has_index=true),
+    "matt" => (file="input/trees/coords_2021.csv",has_index=false)
 )
 
-for (tree_name,tree) in trees, (field_name,field) in fields
-    name="$tree_name-$field_name"
-    println("Writing $name")
-    export_field_function(name,field,tree,100)
+struct VisualTree
+    file::String
+    patterns::Dict{String,String}
 end
+
+tree_details = Dict{String,VisualTree}()
+
+function add_tree_pattern( tree_name , tree_file , pattern_name , file_name )
+    if !haskey(tree_details,tree_name)
+        tree_details[tree_name] = VisualTree( tree_file , Dict{String,String}() )
+    end
+    tree_details[tree_name].patterns[pattern_name] = file_name
+end
+
+for (tree_name,tree_spec) in trees
+    local tree = load_tree( tree_spec.file; has_index=tree_spec.has_index)
+    for (field_name,field) in fields
+        name="$tree_name-$field_name"
+        filename="input/patterns/$name.csv"
+        println("Writing $name")
+        export_field_function(filename,field,tree,100)
+        add_tree_pattern( tree_name , tree_spec.file , field_name , filename )
+    end
+end
+
+println(tree_details)

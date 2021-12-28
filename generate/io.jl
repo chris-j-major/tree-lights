@@ -1,13 +1,12 @@
 function load_tree( filename; has_index::Bool = true )
     println("Loading $filename")
-    lines = readlines(filename) 
     range = has_index ? (2:4) : (1:3)
     function parse_line(line)
         safe_line = replace(line,r"[^0-9.,-]+" => "")
         parts = split(safe_line, ","; limit=4, keepempty=true)[range]
         return map( (x)->parse(Float64,strip(x)) , parts )
     end
-    return map( parse_line , lines)
+    return map( parse_line , eachline(filename) )
 end
 
 
@@ -30,7 +29,7 @@ function header(light_count)
 end
 
 function export_field_function(filename,f,tree,frames)
-    open("input/patterns/$filename.csv","w") do io
+    open(filename,"w") do io
         println(io,header(length(tree)))
         for frame_index = 1:frames
             colors = generate_light_colors( frame_index , tree , f )
