@@ -48,9 +48,15 @@ class Lights {
 
     update( parts ){
         const l = this;
-        if ( parts.slider && this.frame_slider ){
-            this.frame_slider.max = l.frames -1;
-            this.frame_slider.value = l.frame;
+        if ( parts.slider ){
+            if (this.frame_slider ){
+                this.frame_slider.max = l.frames -1;
+                this.frame_slider.value = l.frame;
+            }
+            if (this.rotate_slider ){
+                this.rotate_slider.max = Math.PI*2;
+                this.rotate_slider.value = (l.rotate)%(Math.PI*2);
+            }
         }
         if ( parts.positions ){
             function setPositions(e){
@@ -101,8 +107,16 @@ class Lights {
     attachFrameSlider(element){
         this.frame_slider = element;
         element.oninput = ()=>{
-            this.frame = this.frame_slider.value;
+            this.frame = parseInt(this.frame_slider.value);
             this.update( { positions:false , colors:true , slider:false });
+        }
+    }
+
+    attachRotateSlider(element){
+        this.rotate_slider = element;
+        element.oninput = ()=>{
+            this.rotate = parseFloat(this.rotate_slider.value);
+            this.update( { positions:true , colors:false , slider:false });
         }
     }
 
