@@ -39,13 +39,13 @@ function twist_smooth_function( frame_index , position )
 end
 
 fields = Dict(
-    "sins" => field_function,
-    "twist" => twist_sharp_function,
-    "twist-smooth" => twist_smooth_function,
+    "sins" => (field_function,100),
+    "twist" => (twist_sharp_function,100),
+    "twist-smooth" => (twist_smooth_function,100),
 )
 
 simulations = Dict(
-    "sir" => create_sir
+    "sir" => (create_sir,500)
 )
 
 trees = Dict(
@@ -69,18 +69,18 @@ end
 
 for (tree_name,tree_spec) in trees
     local tree = load_tree( tree_spec.file; has_index=tree_spec.has_index)
-    for (field_name,field) in fields
+    for (field_name,(field,length)) in fields
         name="$tree_name-$field_name"
         filename="input/patterns/$name.csv"
         println("Writing field $name")
-        export_field_function(filename,field,tree,100)
+        export_field_function(filename,field,tree,length)
         add_tree_pattern( tree_name , tree_spec.file , field_name , filename )
     end
-    for (sim_name,sim) in simulations
+    for (sim_name,(sim,length)) in simulations
         name="$tree_name-$sim_name"
         filename="input/patterns/$name.csv"
         println("Writing simulation $name")
-        export_simulation(filename,sim,tree,100)
+        export_simulation(filename,sim,tree,length)
         add_tree_pattern( tree_name , tree_spec.file , sim_name , filename )
     end
 end
