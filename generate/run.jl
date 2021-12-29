@@ -4,6 +4,8 @@ function color(r,g,b)
     return ( convert(UInt8, floor(r)), convert(UInt8, floor(g)) ,convert(UInt8, floor(b)))
 end
 
+include("sims/sir.jl")
+
 function field_function( frame_index , position )
     r = (sin(frame_index*0.1+position[1]*4.0)+1)*128
     g = (sin(frame_index*0.1+position[2]*4.0)+1)*128
@@ -42,6 +44,10 @@ fields = Dict(
     "twist-smooth" => twist_smooth_function,
 )
 
+simulations = Dict(
+    "sir" => create_sir
+)
+
 trees = Dict(
     "pcam" => (file="input/trees/pcam_coords.csv",has_index=true),
     "matt" => (file="input/trees/coords_2021.csv",has_index=false)
@@ -66,9 +72,16 @@ for (tree_name,tree_spec) in trees
     for (field_name,field) in fields
         name="$tree_name-$field_name"
         filename="input/patterns/$name.csv"
-        println("Writing $name")
+        println("Writing field $name")
         export_field_function(filename,field,tree,100)
         add_tree_pattern( tree_name , tree_spec.file , field_name , filename )
+    end
+    for (sim_name,sim) in simulations
+        name="$tree_name-$sim_name"
+        filename="input/patterns/$name.csv"
+        println("Writing simulation $name")
+        export_simulation(filename,sim,tree,100)
+        add_tree_pattern( tree_name , tree_spec.file , sim_name , filename )
     end
 end
 
