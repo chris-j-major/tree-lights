@@ -29,7 +29,9 @@ class Interface{
         d3.text("../"+this.treeDetails.file).then((text)=>{
             // This is because the light positions don't have a header row
             const data = d3.csvParseRows(text).map((row)=>{
-                //row.splice(0,1)
+                if (row.length > 3){
+                    row.splice(0,1)
+                }
                 return row.map( value => +value )
             })
             console.log("Loaded tree "+treeName);
