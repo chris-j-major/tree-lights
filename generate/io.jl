@@ -1,3 +1,5 @@
+using JSON
+
 function load_tree( filename; has_index::Bool = true )
     println("Loading $filename")
     range = has_index ? (2:4) : (1:3)
@@ -49,5 +51,11 @@ function export_simulation(filename,s,tree,frames)
             output_line = convert_colors_to_line( frame_index , colors )
             println(io,output_line)
         end
+    end
+end
+
+function write_tree_details(details)
+    open("input/index.json","w") do io
+        println(io,JSON.json(details,2))
     end
 end

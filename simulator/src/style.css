@@ -11,3 +11,8 @@ html body {
     top:4px;
     left:4px;
 }
+#interface {
+    position:absolute;
+    top:40px;
+    left:4px;
+}

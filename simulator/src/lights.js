@@ -92,7 +92,7 @@ class Lights {
             function setColor(el){
                 el.attr("fill",(_,i)=>l.pattern[l.frame][i])
             }
-            this.all_lights.call(setColor);
+            this.all_lights?.call(setColor);
         }
         if ( parts.lines || parts.positions ){
             function setLine(el){

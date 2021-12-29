@@ -85,4 +85,4 @@ for (tree_name,tree_spec) in trees
     end
 end
 
-println(tree_details)
+write_tree_details(tree_details);

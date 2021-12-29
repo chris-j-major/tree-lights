@@ -6,20 +6,21 @@ end
 
 struct SirState
     states::Vector{SirLightState}
-    edges::Vector{Vector{Int16}}
+    edges::Vector{Vector{Tuple{Int16,Float64}}}
 end
 
 
 function create_sir(tree,frames)::SirState
     initial = [ SirLightState(0) for pos in tree]
     initial[40].current = 1
-    edges = [ Vector{Int16}() for pos in tree]
+    edges = [ Vector{Tuple{Int16,Float64}}() for pos in tree]
     for i in 1:length(tree), j in 1:length(tree)
         pi = tree[i]
         pj = tree[j]
         d = norm(pi .- pj)
         if ( d < 0.4 )
-            push!(edges[i] , j)
+            t = (j,0.9+0.1*(d/0.4))
+            push!(edges[i] , t)
         end
     end
     return SirState( initial , edges )
@@ -32,8 +33,8 @@ function simulation_tick(state::SirState,frame_index,tree)
             s.current += 1
             e = state.edges[i]
             # See if we ca infect something
-            for j in e
-                if state.states[j].current == 0 && random() > 0.9
+            for (j,prob) in e
+                if state.states[j].current == 0 && rand() > prob
                     state.states[j].current = 1
                 end
             end
