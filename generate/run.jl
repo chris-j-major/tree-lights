@@ -111,6 +111,11 @@ simulations = Dict(
     "sir" => (create_sir,500)
 )
 
+interpolation = Dict(
+    "global-temp-slow" => ( "global-temp", 10 ),
+    "sir-slow" => ( "sir", 10 )
+)
+
 trees = Dict(
     "pcam" => (file="input/trees/pcam_coords.csv",has_index=true),
     "matt" => (file="input/trees/coords_2021.csv",has_index=false)
@@ -130,6 +135,39 @@ function add_tree_pattern( tree_name , tree_file , pattern_name , file_name )
     tree_details[tree_name].patterns[pattern_name] = file_name
 end
 
+function interpolate( a , b , factor )
+    inverse_factor = 1.0 - factor
+    return (a .* inverse_factor) .+ (b .* factor)
+end
+
+function interpolate_file( output_name , input_name , multiplier )
+    open(output_name,"w") do o
+        line_index = 0
+        values = Dict{Int64,Vector{Int16}}()
+        function parse_line(line)
+            if line_index == 0
+                println(o,line) # header
+            else
+                safe_line = replace(line,r"[^0-9.,-]+" => "")
+                parts = split(safe_line, ","; keepempty=true)
+                values[line_index] = map( (x)->parse(Int16,strip(x)) , parts )
+            end
+            line_index += 1
+        end
+        foreach( parse_line , eachline(input_name) )
+        output_frame = 0
+        for x in 1:(line_index-2)
+            for y in 1:multiplier
+                row = interpolate( values[x] , values[x+1] , y/multiplier)
+                row[1] = output_frame # overwrite the frame number, no need to interpolate
+                line = join(map( (x) -> string( convert(Int,floor(x))) , row),",")
+                println(o,line)
+                output_frame += 1
+            end
+        end
+    end
+end
+
 for (tree_name,tree_spec) in trees
     local tree = load_tree( tree_spec.file; has_index=tree_spec.has_index)
     for (field_name,(field,length)) in fields
@@ -146,8 +184,16 @@ for (tree_name,tree_spec) in trees
         export_simulation(filename,sim,tree,length)
         add_tree_pattern( tree_name , tree_spec.file , sim_name , filename )
     end
+    for (name,(original,multiplier)) in interpolation
+        name="$tree_name-$name"
+        filename="input/patterns/$name.csv"
+        println("Interpolation $name")
+        interpolate_file( filename , tree_details[tree_name].patterns[original] , multiplier )
+        add_tree_pattern( tree_name , tree_spec.file , name , filename )
+
+    end
 end
 
 write_tree_details(tree_details);
 
-build_light_map_image( load_tree("input/trees/coords_2021.csv"; has_index=false) , 50)
+# build_light_map_image( load_tree("input/trees/coords_2021.csv"; has_index=false) , 50)

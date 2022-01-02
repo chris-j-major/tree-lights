@@ -16,8 +16,25 @@ function generate_light_colors( frame_index , tree , f)
     return map( p->f(frame_index,p) , tree )
 end
 
+
+function int(v::UInt8)
+    return v
+end
+function int(v::UInt64)
+    return convert(UInt8,v)
+end
+function int(v::Int64)
+    return convert(UInt8,v)
+end
+function int(f::Float32)
+    return convert(UInt8,round(f))
+end
+function int(f::Float64)
+    return convert(UInt8,round(f))
+end
+
 function color_to_csv( color )::String
-    return "$(color[1]),$(color[2]),$(color[3])"
+    return "$(int(color[1])),$(int(color[2])),$(int(color[3]))"
 end
 
 function convert_colors_to_line( frame_index , colors )::String
