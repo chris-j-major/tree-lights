@@ -184,12 +184,12 @@ for (tree_name,tree_spec) in trees
         export_simulation(filename,sim,tree,length)
         add_tree_pattern( tree_name , tree_spec.file , sim_name , filename )
     end
-    for (name,(original,multiplier)) in interpolation
-        name="$tree_name-$name"
+    for (interpolation_name,(original,multiplier)) in interpolation
+        name="$tree_name-$interpolation_name"
         filename="input/patterns/$name.csv"
         println("Interpolation $name")
         interpolate_file( filename , tree_details[tree_name].patterns[original] , multiplier )
-        add_tree_pattern( tree_name , tree_spec.file , name , filename )
+        add_tree_pattern( tree_name , tree_spec.file , interpolation_name , filename )
 
     end
 end

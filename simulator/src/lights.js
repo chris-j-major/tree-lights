@@ -11,7 +11,6 @@ class Lights {
         this.frames = 1;
         this.scale = 240;
         this.rotate = 0.1;
-        this.rotate_speed = 0.1;
         this.view_angle = 0;
         this.x_offset = 0;
         this.y_offset = 150;
@@ -55,6 +54,15 @@ class Lights {
         return this.y_offset + t*(d[0]*Math.cos(this.rotate) - d[1]*Math.sin(this.rotate)) * this.scale
             + s * d[2] * this.scale;
     }
+    zCoord(d){
+        const t = Math.cos(this.view_angle);
+        return t*(d[0]*Math.cos(this.rotate) - d[1]*Math.sin(this.rotate))
+    }
+    zRadius(d){
+        const z = this.zCoord(d)
+        const r = (z + 3) * 4.0
+        return Math.max(0,Math.min(r,20))
+    }
 
     update( parts ){
         const l = this;
@@ -72,7 +80,7 @@ class Lights {
             function setPositions(e){
                 e.attr("cx",(d)=>l.xCoord(d))
                  .attr("cy",(d)=>l.yCoord(d))
-                 .attr("r",4);
+                 .attr("r",(d)=>l.zRadius(d))
             }
             this.g.lights.selectAll("circle")
                 .data(this.lights)
@@ -120,12 +128,12 @@ class Lights {
 
     play(){
         const l = this;
+        const frames_per_second = 60;
         if ( !this.timer ){
             this.timer = window.setInterval(()=>{
-                l.rotate += l.rotate_speed;
                 l.frame  = (l.frame+1) % l.frames;
-                l.update( { positions:true , colors:true , slider:true });
-            }, 100);
+                l.update( { positions:false , colors:true , slider:true });
+            }, 1000 / frames_per_second );
         }
     }
 
